@@ -76,7 +76,7 @@ const Layout = () => {
   
   if (showHospitalList) {
     return (
-      <div className="min-h-screen w-full bg-linear-gradient(to bottom right, var(--tw-gradient-stops)) from-gray-900 via-gray-800 to-indigo-900 p-4 md:p-8 flex flex-col items-center">
+      <div className="min-h-screen w-full bg-linear-to-br from-gray-900 via-gray-800 to-indigo-900 p-4 md:p-8 flex flex-col items-center">
         <div className="w-full max-w-4xl">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-white">Select Hospital</h2>
