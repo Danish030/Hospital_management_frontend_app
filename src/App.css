@@ -1,6 +1,7 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+  font-family: "Poppins", sans-serif; /* Modern, clean font */
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
 }
