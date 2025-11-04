@@ -10,12 +10,14 @@ import OpdTokenDashboard from './component/OpdTokenDashboard'
 import BedManagement from './component/BedManagement'
 import AdminDashboardLayout from './component/AdminDashboardLayout'
 import BookBed from './component/BookBed'
+import Chatbot from './component/ChatBot'
 
 function App() {
 
 
   return (
     <>
+      <Chatbot />
       <Routes>
         <Route path="/" element={<Layout />} />
         <Route path="/Card" element={<Card />} />
@@ -23,7 +25,6 @@ function App() {
         <Route path="/register-patient" element={<RegistrationForm />} />
         <Route path="/AdminLogin" element={<AdminLogin />} />
         <Route path="/book-bed/:hospitalName/:bedNumber" element={<BookBed />} />
-        
         <Route path="/admin" element={<AdminDashboardLayout />}>
           <Route path="opd-token" element={<OpdTokenDashboard />} />
           <Route path="bed-management" element={<BedManagement />} />

@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { HomeIcon, TicketIcon, ViewfinderCircleIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, TicketIcon, ViewfinderCircleIcon, ArrowLeftOnRectangleIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 
-const Sidebar = () => {
+const Sidebar = ({ adminName }) => {
   const navigate = useNavigate();
   const navLinkClasses = ({ isActive }) =>
     `flex items-center px-4 py-3 text-gray-700 rounded-lg transition-colors duration-200 ${
@@ -14,7 +14,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="w-64 h-screen bg-white shadow-lg p-4 flex flex-col">
+    <div className="w-64 h-screen bg-white shadow-lg p-4 flex flex-col justify-between">
       <div>
         <div className="flex items-center mb-8">
           <ViewfinderCircleIcon className="w-10 h-10 text-indigo-600" />
@@ -31,7 +31,17 @@ const Sidebar = () => {
           </NavLink>
         </nav>
       </div>
-      <div className="mt-auto">
+      
+      <div>
+        {adminName && (
+          <div className="mb-4 p-3 bg-gray-100 rounded-lg flex items-center">
+            <UserCircleIcon className="w-8 h-8 text-gray-500 mr-3" />
+            <div>
+              <p className="text-sm font-semibold text-gray-800">{adminName}</p>
+              <p className="text-xs text-gray-500">Administrator</p>
+            </div>
+          </div>
+        )}
         <button
           onClick={handleLogout}
           className="flex items-center w-full px-4 py-3 text-red-600 rounded-lg hover:bg-red-100 transition-colors duration-200"

@@ -49,15 +49,11 @@ function FormInput({
 function AdminLogin() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    adminId: "",
+    username: "",
     password: "",
   });
   const [error, setError] = useState("");
-
-  const mockAdmins = [
-    { adminId: 'admin', password: 'password', hospital: 'Apollo Hospital' },
-    { adminId: 'admin2', password: 'password2', hospital: 'Fortis Hospital' },
-  ];
+  const [submitting, setSubmitting] = useState(false);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -68,21 +64,42 @@ function AdminLogin() {
     }));
   }
 
-  function submitHandler(event) {
+  async function submitHandler(event) {
     event.preventDefault();
-    if (!formData.adminId || !formData.password) {
-      setError("Please enter both Admin ID and Password.");
+    if (!formData.username || !formData.password) {
+      setError("Please enter both Username and Password.");
       return;
     }
     
-    const admin = mockAdmins.find(
-      (a) => a.adminId === formData.adminId && a.password === formData.password
-    );
+    setSubmitting(true);
+    setError("");
 
-    if (admin) {
-      navigate("/admin/opd-token", { state: { hospital: admin.hospital } });
-    } else {
-      setError("Invalid Admin ID or Password.");
+    try {
+      const response = await fetch('https://hospital-management-system-backend-gky9.onrender.com/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Invalid credentials');
+      }
+
+      // The previous mock implementation passed a hospital name. We'll get username and hospitalId from the response.
+      const { username, hospitalId } = data;
+      navigate("/admin/opd-token", { state: { adminName: username, hospitalId: hospitalId } });
+
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -101,14 +118,14 @@ function AdminLogin() {
 
           <div className="grid grid-cols-1 gap-6">
             <FormInput
-              id="adminId"
-              label="Admin ID"
+              id="username"
+              label="Username"
               type="text"
-              name="adminId"
-              value={formData.adminId}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               icon={<UserIcon className="w-5 h-5 text-gray-400" />}
-              placeholder="e.g., ADMIN-001"
+              placeholder="e.g., admin_apollo"
             />
             <FormInput
               id="password"
@@ -125,10 +142,23 @@ function AdminLogin() {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <button
               type="submit"
-              className="w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-xl shadow-lg text-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out transform hover:scale-[1.01]"
+              disabled={submitting}
+              className="w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-xl shadow-lg text-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out transform hover:scale-[1.01] disabled:bg-gray-400 disabled:transform-none"
             >
-              <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3" />
-              Login
+              {submitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Logging in...
+                </>
+              ) : (
+                <>
+                  <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3" />
+                  Login
+                </>
+              )}
             </button>
             {error && (
               <p className="mt-4 text-sm text-red-600 text-center">{error}</p>

@@ -1,34 +1,58 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 
 const OpdTokenDashboard = () => {
-  const location = useLocation();
-  const hospital = location.state?.hospital || 'No hospital selected';
+  const { hospitalId } = useOutletContext();
+  const navigate = useNavigate();
+  const [hospitalName, setHospitalName] = useState('Loading...');
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchHospitalDetails = async () => {
+      if (!hospitalId) {
+        setHospitalName('No hospital assigned');
+        return;
+      }
+      try {
+        const response = await fetch('https://hospital-management-system-backend-gky9.onrender.com/api/hospitals');
+        if (!response.ok) {
+          throw new Error('Failed to fetch hospitals');
+        }
+        const hospitals = await response.json();
+        const currentHospital = hospitals.find(h => h._id === hospitalId);
+        if (currentHospital) {
+          setHospitalName(currentHospital.name);
+        } else {
+          setHospitalName('Unknown Hospital');
+        }
+      } catch (err) {
+        setError(err.message);
+        setHospitalName('Error loading hospital');
+      }
+    };
+
+    fetchHospitalDetails();
+  }, [hospitalId]);
+
+  const handleGenerateToken = () => {
+    // Navigate to the registration form, passing the hospitalId
+    navigate('/register-patient', { state: { preselectedHospitalId: hospitalId } });
+  };
 
   return (
     <div className="p-4 sm:p-6">
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">OPD Token Management for {hospital}</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">OPD Token Management for {hospitalName}</h1>
       
-      {/* Hospital Selection Dropdown */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow">
-        <label htmlFor="hospital-select" className="block text-sm font-medium text-gray-700 mb-1">
-          Hospital
-        </label>
-        <select
-          id="hospital-select"
-          name="hospital-select"
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-gray-100 cursor-not-allowed"
-          value={hospital}
-          disabled
-        >
-          <option>{hospital}</option>
-        </select>
-      </div>
+      {error && <p className="text-red-500 bg-red-100 p-3 rounded-lg mb-4">{error}</p>}
 
       {/* Token Generation */}
       <div className="mb-6">
-        <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105">
-          Generate New Token
+        <button 
+          onClick={handleGenerateToken}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 disabled:bg-gray-400"
+          disabled={!hospitalId}
+        >
+          Generate New Token for a Patient
         </button>
       </div>
 
@@ -54,17 +78,10 @@ const OpdTokenDashboard = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {/* Populate with token data */}
+              {/* This section would be populated with live token data */}
               <tr className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#001</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Sample Patient</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                    Pending
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <a href="#" className="text-indigo-600 hover:text-indigo-900">Edit</a>
+                <td colSpan="4" className="px-6 py-10 text-center text-gray-500">
+                  Live token data for this hospital will be displayed here.
                 </td>
               </tr>
             </tbody>
