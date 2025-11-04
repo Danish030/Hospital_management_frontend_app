@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
+import RegistrationForm from './RegistrationForm';
 // Utility functions (unchanged)
 const getBedStatusClass = (status) => {
   switch (status) {
@@ -27,7 +27,10 @@ const HospitalDashboard = () => {
   // OPD Metrics (Unchanged)
   const [currentQueue] = useState(101);
   const [waitingList] = useState(5);
-  const handleRegister = () => { /* ... */ alert(`Patient Registered.`); };
+    const handleRegisterPatient = () => {
+        // This is the function that redirects to the new form page
+        navigate('/register-patient'); 
+    };
 
   // Bed Metrics and Mock Data (Unchanged)
   const initialBeds = Array.from({ length: 30 }, (_, i) => ({
@@ -37,7 +40,22 @@ const HospitalDashboard = () => {
   const totalBeds = beds.length;
   const emptyICUBeds = beds.filter(b => b.type === 'ICU' && b.status === 'Empty').length;
   const emptyGenBeds = beds.filter(b => b.type === 'Gen' && b.status === 'Empty').length;
-  const handleBookBed = (bedId) => { /* ... */ alert(`Bed ${bedId} interaction handled.`); };
+  const handleBookBed = (bed) => {
+    if (bed.status === 'Empty') {
+      navigate(`/book-bed/${hospital.name}/${bed.id}`);
+    } else {
+      alert(`Bed ${bed.id} is currently ${bed.status}.`);
+    }
+  };
+
+  const handleBookFirstAvailable = () => {
+    const firstAvailableBed = beds.find(b => b.status === 'Empty');
+    if (firstAvailableBed) {
+      navigate(`/book-bed/${hospital.name}/${firstAvailableBed.id}`);
+    } else {
+      alert('No available beds at the moment.');
+    }
+  };
 
   // --- Reusable Metric Card Component (Unchanged) ---
   const MetricCard = ({ header, value, colorClass }) => (
@@ -64,7 +82,7 @@ const HospitalDashboard = () => {
           <MetricCard header="Patients in Waiting List" value={waitingList} colorClass="red" />
       </div>
       <button
-          onClick={handleRegister}
+          onClick={handleRegisterPatient}
           className="w-full py-3 bg-red-600 text-white text-lg font-semibold rounded-lg hover:bg-red-700 transition duration-200 shadow-xl"
       >
           Register New Patient
@@ -95,7 +113,7 @@ const HospitalDashboard = () => {
             {beds.map((bed) => (
                 <div 
                     key={bed.id}
-                    onClick={() => handleBookBed(bed.id)}
+                    onClick={() => handleBookBed(bed)}
                     className={`h-16 flex flex-col justify-center items-center rounded-lg cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-indigo-400 transition duration-150 ${getBedStatusClass(bed.status)} ${bed.status !== 'Empty' ? 'text-white' : 'text-gray-700'}`}
                 >
                     <span className="text-sm font-extrabold leading-tight">B-{bed.id}</span> 
@@ -107,7 +125,7 @@ const HospitalDashboard = () => {
         {/* Make this button sticky to the bottom of the viewport */}
         <div className="sticky bottom-0 left-0 right-0 p-4 bg-gray-50/90 backdrop-blur-sm -mx-6 md:-mx-10 border-t border-gray-200 z-10">
             <button 
-                onClick={() => alert("Launching advanced bed booking form...")}
+                onClick={handleBookFirstAvailable}
                 className="w-full py-3 bg-indigo-600 text-white text-lg font-semibold rounded-lg hover:bg-indigo-700 transition duration-200 shadow-lg"
             >
                 Book an Available Bed
