@@ -36,7 +36,7 @@ const OpdTokenDashboard = () => {
 
   const handleGenerateToken = () => {
     // Navigate to the registration form, passing the hospitalId
-    navigate('/register-patient', { state: { preselectedHospitalId: hospitalId } });
+    navigate('/register-patient', { state: { preselectedHospitalId: currentHospital } });
   };
 
   return (

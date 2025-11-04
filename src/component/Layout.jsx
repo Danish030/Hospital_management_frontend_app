@@ -76,17 +76,19 @@ const Layout = () => {
   
   if (showHospitalList) {
     return (
-      <div className="max-w-7xl mx-auto p-6 md:p-10 bg-gray-50 min-h-screen">
-        <div className="flex justify-between items-center mb-8 border-b pb-4">
-          <h2 className="text-3xl font-bold text-indigo-700">Select Hospital Location</h2>
-          <button 
-            onClick={handleBack} 
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-150"
-          >
-            Back to Home
-          </button>
+      <div className="min-h-screen w-full bg-linear-gradient(to bottom right, var(--tw-gradient-stops)) from-gray-900 via-gray-800 to-indigo-900 p-4 md:p-8 flex flex-col items-center">
+        <div className="w-full max-w-4xl">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold text-white">Select Hospital</h2>
+            <button 
+              onClick={handleBack} 
+              className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition duration-150"
+            >
+              Back to Home
+            </button>
+          </div>
+          <Card onSelectHospital={onSelectHospital} />
         </div>
-        <Card onSelectHospital={onSelectHospital} />
       </div>
     );
   }

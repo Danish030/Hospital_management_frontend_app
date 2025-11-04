@@ -110,11 +110,11 @@ const RegistrationForm = () => {
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
             <div className="max-w-2xl w-full bg-white rounded-xl shadow-2xl p-8 space-y-8">
-                
+
                 <div className="flex justify-between items-center">
                     <h2 className="text-3xl font-bold text-gray-800">Patient Registration</h2>
-                    <button 
-                        onClick={onBack} 
+                    <button
+                        onClick={onBack}
                         className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition duration-150"
                     >
                         Back
@@ -175,6 +175,15 @@ const RegistrationForm = () => {
                             <option value="Cardiology">Cardiology</option>
                             <option value="Neurology">Neurology</option>
                             <option value="Orthopedics">Orthopedics</option>
+                            <option value="Medicine">Medicine</option>
+                            <option value="Opthamology">Opthamology</option>
+                            <option value="Urology">Urology</option>
+                            <option value="Nephrology">Nephrology</option>
+                            <option value="Dermatology">Dermatology</option>
+                            <option value="ENT">ENT</option>
+                            <option value="pediatrician">pediatrician</option>
+                            <option value="Pulomonology">Pulomonology</option>
+                            <option value="gasterology">gasterology</option>
                         </select>
                     </div>
 
